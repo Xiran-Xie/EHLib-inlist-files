@@ -1,0 +1,105 @@
+
+&star_job
+
+  show_log_description_at_start = .false. 
+
+  load_saved_model = .true.
+  load_model_filename = 'tams.mod'
+
+  save_model_when_terminate = .true.
+  save_model_filename = 'final.mod'
+
+  set_initial_model_number = .false.
+
+  set_initial_age = .false.
+
+  set_initial_cumulative_energy_error = .false.
+
+  new_rotation_flag = .true.
+  change_rotation_flag = .true.
+  !set_initial_surface_rotation_v = .true.
+  set_surf_rotation_v_step_limit = 500
+  new_surface_rotation_v = 15.0
+  set_surface_rotation_v = .true.
+
+/ !end of star_job namelist
+
+&eos
+
+/ ! end of eos namelist
+
+
+&kap
+      Zbase = 0.004723282930057787
+/ ! end of kap namelist
+
+&controls
+
+      ! limit max_model_number as part of test_suite
+      max_years_for_timestep  = 1d5
+      
+      calculate_Brunt_N2 = .true.
+
+     ! GYRE output controls
+
+     x_integer_ctrl(1) = 1 ! output GYRE info at this step interval
+     x_logical_ctrl(1) = .true.! save GYRE info whenever save profile
+    
+     x_integer_ctrl(2) = 1 ! max number of modes to output per call
+     x_logical_ctrl(2) = .false. ! output eigenfunction files
+
+     x_integer_ctrl(3) = 0 ! mode l (e.g. 0 for p modes, 1 for g modes)
+        ! should match gyre.in mode l
+     x_integer_ctrl(4) = 1 ! order
+     x_ctrl(1) = 0.2d-3 ! freq ~ this (Hz)
+     x_ctrl(2) = 1d99 ! growth < this (days)
+     
+
+  ! starting specifications
+
+  ! stop when the center mass fraction of h1 drops below this limit
+    Teff_lower_limit = 5.5d3
+
+   energy_eqn_option = 'dedt'
+   
+   star_history_name = 'historypms.data'
+
+    ! rotational mixing coeffs
+    am_nu_ST_factor = 1.0
+    D_visc_factor = 0.0
+    am_nu_SH_factor = 0.0
+    D_ST_factor = 0.0
+    D_SH_factor = 0.0
+    D_GSF_factor = 1.0
+    D_ES_factor = 1.0
+    D_SSI_factor = 1.0
+    D_DSI_factor = 1.0
+    am_D_mix_factor = 0.0333d0
+    am_gradmu_factor = 0.1d0
+    num_cells_for_smooth_gradL_composition_term = 3
+   
+      ! Overshooting from upper non-burning zones
+    overshoot_scheme(1) = 'exponential'
+    overshoot_zone_type(1) = 'any'
+    overshoot_zone_loc(1) = 'any'
+    overshoot_bdy_loc(1) = 'top'
+    overshoot_f(:) = 0.015
+    overshoot_f0(:) = 0.001
+   
+    
+  ! output
+
+   num_trace_history_values = 2
+   trace_history_value_name(1) = 'rel_E_err'
+   trace_history_value_name(2) = 'log_rel_run_E_err'
+   
+      mixing_length_alpha = 1.89d0
+
+      photo_interval = 100000
+      profile_interval = 100000
+      history_interval = 1
+      terminal_interval = 10
+     ! write_header_frequency = 10
+
+
+/ ! end of controls namelist
